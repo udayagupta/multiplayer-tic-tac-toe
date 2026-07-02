@@ -1,17 +1,19 @@
 const generateRoomCode = require("../utils/roomCode");
 
+const GAME_STATUS = {
+  WAITING: "waiting",
+  PLAYING: "playing",
+  WON: "won",
+  DRAW: "draw",
+}
+
 const rooms = {};
 
 const checkWinner = (board) => {
   const combinations = [
-    [0, 1, 2], 
-    [3, 4, 5], 
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [6, 4, 2],
+    [0, 1, 2], [3, 4, 5], [6, 7, 8],
+    [0, 3, 6], [1, 4, 7], [2, 5, 8],
+    [0, 4, 8], [6, 4, 2],
   ];
 
   const winner = combinations.find(([a, b, c]) => 
@@ -54,15 +56,15 @@ const joinRoom = (socketId, roomCode) => {
 };
 
 const isValidMove = (room, cellIndex, socketId) => {
-  const currentPlayer = room.players.find(pl => pl.socketId === socketId);
+  const currentPlayer = room.players.find(player => player.socketId === socketId);
 
-  if (room.status !== "playing") return false;
-  if (!currentPlayer) return false;
-  if (currentPlayer.symbol !== room.currentTurn) return false;
-  if (!(cellIndex >= 0 && cellIndex <= 8)) return false;
-  if (room.board[cellIndex] !== null) return false;
+  if (room.status !== "playing") return { success: false, error: "Game is already over" };
+  if (!currentPlayer) return { success: false, error: "Player not found" };
+  if (currentPlayer.symbol !== room.currentTurn) return { success: false, error: `Not ${currentPlayer.symbol}'s turn` };
+  if (!(cellIndex >= 0 && cellIndex <= 8)) return { success: false, error: "Cell index out of bounds" };
+  if (room.board[cellIndex] !== null) return { success: false, error: "Not empty" };
 
-  return true;
+  return { success: true, message: "Move is valid" };
 };
 
 const applyMove = (room, cellIndex) => {
@@ -83,4 +85,3 @@ const applyMove = (room, cellIndex) => {
 };
 
 module.exports = { rooms, checkWinner, createRoom, joinRoom, isValidMove, applyMove };
-

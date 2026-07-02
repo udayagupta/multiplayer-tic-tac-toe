@@ -1,1 +1,129 @@
 @import "tailwindcss";
+
+:root {
+    --ink: #12172B;
+    --ink-soft: #1B2140;
+    --paper: #EDEAE3;
+    --paper-dim: #C9C5BA;
+    --line: #374163;
+    --x-red: #D6584F;
+    --o-teal: #4AA3A2;
+};
+
+body {
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--paper);
+};
+
+.lobby {
+    position: relative;
+    overflow: hidden;
+    background-size: 64px 64px;
+    background-position: center;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+}
+
+.lobby::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 0%, var(--ink) 75%);
+    pointer-events: none;
+}
+
+.lobby-content {
+    z-index: 1;
+}
+
+.line {
+    background-color: var(--line);
+    height: 2px;
+}
+
+.create-room-btn {
+    background-color: var(--x-red);
+    padding: 1rem;
+    border-radius: 4px;
+    box-shadow: 0 4px 0 #a8382f, 0 8px 24px rgba(214, 88, 79, 0.25);
+    transition: 300ms;
+    font-weight: 600;
+    font-size: 1.2rem;
+    
+}
+
+.mark-row {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    margin-bottom: 28px;
+}
+
+.mark {
+    width: 34px;
+    height: 34px;
+    opacity: 0.85;
+}
+
+.create-room-btn:hover {
+    cursor: pointer;
+}
+
+.create-room-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #a8382f, 0 4px 16px rgba(214, 88, 79, 0.25);
+}
+
+.join-room {
+    padding: 1.5rem;
+    background-color: var(--ink-soft);
+    border-radius: 0.5rem;
+    border: 1px solid var(--line);
+}
+
+.join-btn {
+    border: 1px solid var(--o-teal);
+    font-weight: 600;
+    transition: 300ms;
+    color: var(--o-teal);
+}
+
+.join-btn:hover {
+    background-color: var(--o-teal);
+    color: var(--ink);
+    cursor: pointer;
+}
+
+
+.code-input {
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    border: 1px solid var(--line);
+    background-color: var(--ink);
+    /* font-size: 1.2rem; */
+    transition: 200ms;
+}
+
+.code-input:active {
+    outline: none;
+}
+
+.code-input:focus {
+    outline: none;
+    border-color: var(--o-teal);
+}
+
+@media (max-width: 402px) {
+    .join-room-form {
+        flex-direction: column;
+    }
+
+    .code-input {
+        width: 100%;
+    }
+
+    .join-btn {
+        width: 100%;
+    }
+}

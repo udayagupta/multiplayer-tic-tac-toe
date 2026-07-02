@@ -1,13 +1,19 @@
-import { useState } from 'react'
+import { useState } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import LobbyPage from './pages/LobbyPage';
+import GamePage from './pages/GamePage';
 
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <>
-      <h1 className=''>hello world</h1>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<LobbyPage />}/>
+        <Route path='/game/:roomCode' element={<GamePage />}/>
+      </Routes>
+    </BrowserRouter>
   )
 }
 
