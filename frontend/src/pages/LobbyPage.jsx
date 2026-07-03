@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { socket } from '../lib/socket';
+import { MarkRowExample } from '../components/Marks';
 
 
 const LobbyPage = () => {
@@ -9,31 +10,40 @@ const LobbyPage = () => {
 
   const handleJoin = () => {
     if (roomCode === "") return;
+
+    socket.off("game_start");
+    socket.off("error");
+
+    socket.on("error", (message) => {
+      console.log("Join error:", message);
+    });
+
+    socket.on("game_start", (room) => {
+      navigate(`/game/${roomCode}`, { state: { room }});
+      console.log(room);
+    });
+
+    socket.emit("join_room", { roomCode });
+
   };
 
-const handleCreate = () => {
-  console.log("handleCreate fired");
-  socket.off("room_created");
-  socket.emit("create_room");
-  console.log("create_room emitted");
-  socket.on("room_created", ({ roomCode }) => {
-    console.log("room_created received", roomCode);
-    navigate(`/game/${roomCode}`);
-  });
-};
+  const handleCreate = () => {
+    socket.off("room_created");
+    socket.off("game_start");
 
-  socket.on("connect", () => console.log("connected", socket.id));
-  socket.on("connect_error", (err) => console.log("connection error", err.message));
+    socket.emit("create_room");
+
+    socket.on("room_created", ({ roomCode }) => {
+      navigate(`/game/${roomCode}`);
+    });
+  };
+
 
   return (
     <div className='lobby flex flex-col justify-center p-3 bg-[#12172B] items-center h-screen'>
       <div className='lobby-content w-full max-w-[480px]'>
 
-        <div className="mark-row">
-          <svg className="mark" viewBox="0 0 24 24" fill="none" stroke="var(--x-red)" strokeWidth="2.5" strokeLinecap="round"><path d="M5 5L19 19M19 5L5 19" /></svg>
-          <svg className="mark" viewBox="0 0 24 24" fill="none" stroke="var(--o-teal)" strokeWidth="2.5"><circle cx="12" cy="12" r="8" /></svg>
-          <svg className="mark" viewBox="0 0 24 24" fill="none" stroke="var(--x-red)" strokeWidth="2.5" strokeLinecap="round"><path d="M5 5L19 19M19 5L5 19" /></svg>
-        </div>
+        <MarkRowExample />
 
         <div className='header text-center'>
           <h1 className='text-sm tracking-[0.28em] uppercase'>Multiplayer Lobby</h1>
@@ -46,7 +56,7 @@ const handleCreate = () => {
 
           <div className=' flex flex-row items-center gap-3.5'>
             <div className="line flex-1"></div>
-            <span className='text-xs tracking-widest text-'>OR</span>
+            <span className='text-xs bg-[#12172B] tracking-widest text-'>OR</span>
             <div className="line flex-1"></div>
           </div>
 
@@ -62,11 +72,11 @@ const handleCreate = () => {
                 id="roomCode"
                 maxLength={6}
                 value={roomCode}
-                onChange={(e) => setRoomCode(e.target.value)}
+                onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
               />
               <button onClick={() => handleJoin()} className='join-btn flex items-center justify-center gap-2 p-[14px_20px] rounded border-[1.5px]'>Join</button>
             </div>
-            <p className='text-[13px] mt-2 hint'>Ask the host for 6-digit room code</p>
+            <p className='text-[13px] mt-2 hint'>Ask the host for 6-digit room code.</p>
           </div>
         </div>
       </div>

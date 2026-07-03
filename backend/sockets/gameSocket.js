@@ -1,18 +1,15 @@
-console.log("gameSocket module loaded");
-
 const { rooms, applyMove, checkWinner, createRoom, isValidMove, joinRoom } = require("../game/rooms");
 
 const gameSocket = (io, socket) => {
     socket.on("create_room", () => {
-        console.log("inside gameSocket.js inside create_room socket.on")
         const result = createRoom(socket.id);
-        
+        console.log("rooms after create:", Object.keys(rooms));
+
         socket.join(result.room.roomCode);
         socket.emit("room_created", {
             roomCode: result.room.roomCode
         });
 
-        console.log("Room created by", socket.id);
     });
 
     socket.on("join_room", ({ roomCode }) => {
@@ -36,11 +33,15 @@ const gameSocket = (io, socket) => {
             io.to(roomCode).emit("game_update", result);
 
         } else {
+            console.log("not a valid move")
             socket.emit("error", validMove.error)
         }
     });
 
     socket.on("disconnect", () => {
+        console.log("disconnect fired for", socket.id);
+        console.log("current rooms:", JSON.stringify(rooms, null, 2));
+
         const room = Object.values(rooms).find(r => r.players.find(pl => pl.socketId === socket.id));
         if (!room) return;
 

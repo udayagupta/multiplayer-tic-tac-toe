@@ -46,6 +46,8 @@ const createRoom = (socketId) => {
 };
 
 const joinRoom = (socketId, roomCode) => {
+  console.log("joinRoom called, rooms before join:", Object.keys(rooms));
+
   if (!rooms[roomCode]) return { success: false, error: "Room not found" };
   if (rooms[roomCode].players.length >= 2) return { success: false, error: "Room already at full" };
 

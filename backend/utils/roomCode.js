@@ -10,7 +10,7 @@ module.exports = generateRoomCode = (rooms, length = 6) => {
       const index = crypto.randomInt(chars.length);
       code += chars[index];
     }
-  } while (!rooms[code]);
+  } while (rooms[code]);
 
   return code;
 };

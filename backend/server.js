@@ -29,6 +29,10 @@ io.on("connection", (socket) => {
     gameSocket(io, socket);
 })
 
+io.engine.on("connection_error", (err) => {
+    console.log("Connection error:", err.req, err.code, err.message, err.context);
+});
+
 
 server.listen(process.env.PORT || 5000, () => {
     console.log(`Server running on ${process.env.PORT || 5000}`);
