@@ -1,4 +1,5 @@
 import React from 'react';
+import { GoCheckCircleFill } from "react-icons/go";
 
 const RESULT_CONFIG = {
   win: {
@@ -18,9 +19,27 @@ const RESULT_CONFIG = {
   },
 };
 
-const GameOverModal = () => {
+const GameOverModal = ({ winner, mySymbol, status }) => {
+  const isWinner = winner === mySymbol;
+  const isDraw = status === "draw";
+
   return (
-    <div>GameOverModal</div>
+    <div style={{backgroundColor: "rgba(0, 0, 0, 0.5)"}} className='w-full h-screen fixed inset-0 z-[10] flex items-center justify-center'>
+      <div className={` flex flex-col gap-3 bg-(--ink-soft) border border-(--line) p-8 rounded w-[300px] `}>
+        <div className='flex flex-col gap-3 text-(--o-teal) items-center justify-center'>
+          <GoCheckCircleFill size={50}/>
+          <p>Game Over</p>
+        </div>
+        <div className='font-semibold text-2xl'>
+          {status === "draw" && <p>{RESULT_CONFIG.draw.text}</p>}
+          {winner && <p className={`${isWinner ? "animate-bounce" : "animate-pulse"}`}>{isWinner ? RESULT_CONFIG.win.text : RESULT_CONFIG.lose.text}</p>}
+        </div>
+        <div className='flex flex-col gap-2'>
+          {/* <button className='p-2 bg-(--o-teal) text-(--ink) hover:bg-(--ink) hover:text-(--o-teal) transition duration-300 cursor-pointer font-semibold border border-(--line) rounded-md '>Rematch</button> */}
+          <a href='/' className='p-2 border font-semibold transition duration-300 hover:bg-(--o-teal) hover:text-(--ink) border-(--line) rounded-md '>Back to lobby</a>
+        </div>
+      </div>
+    </div>
   )
 }
 

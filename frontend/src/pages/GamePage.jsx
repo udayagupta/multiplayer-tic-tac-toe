@@ -3,6 +3,7 @@ import { useParams, useLocation } from 'react-router-dom';
 import { socket } from '../lib/socket';
 import GameBoard from '../components/GameBoard';
 import { Xmark, Omark } from '../components/Marks';
+import GameOverModal from '../components/GameOverModal';
 
 const GamePage = () => {
   const location = useLocation();
@@ -84,7 +85,7 @@ const GamePage = () => {
               onCellClick={handleCellClick}
             />}
 
-        
+          {(room?.winner || status === "draw") && <GameOverModal winner={room?.winner} mySymbol={mySymbol} status={status}/>}        
       </div>
     </div>
   )
