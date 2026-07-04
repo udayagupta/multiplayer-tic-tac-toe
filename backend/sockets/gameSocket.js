@@ -54,6 +54,20 @@ const gameSocket = (io, socket) => {
 
         delete rooms[roomCode];
     });
+
+    socket.on("leave_room", ({ roomCode }) => {
+        const room = rooms[roomCode];
+        if (!room) return;
+
+        io.to(roomCode).emit("player_disconnected", {
+            message: "Your opponent disconnected",
+            roomCode
+        });
+
+        delete rooms[roomCode];
+        socket.leave(roomCode)
+
+    })
 }
 
 module.exports = gameSocket;

@@ -19,7 +19,7 @@ const RESULT_CONFIG = {
   },
 };
 
-const GameOverModal = ({ winner, mySymbol, status }) => {
+const GameOverModal = ({ winner, mySymbol, status, gameStatus }) => {
   const isWinner = winner === mySymbol;
   const isDraw = status === "draw";
 
@@ -33,6 +33,7 @@ const GameOverModal = ({ winner, mySymbol, status }) => {
         <div className='font-semibold text-2xl'>
           {status === "draw" && <p>{RESULT_CONFIG.draw.text}</p>}
           {winner && <p className={`${isWinner ? "animate-bounce" : "animate-pulse"}`}>{isWinner ? RESULT_CONFIG.win.text : RESULT_CONFIG.lose.text}</p>}
+          {status === "disconnected" && <p className='text-lg'>Opponent has disconnected</p>}
         </div>
         <div className='flex flex-col gap-2'>
           {/* <button className='p-2 bg-(--o-teal) text-(--ink) hover:bg-(--ink) hover:text-(--o-teal) transition duration-300 cursor-pointer font-semibold border border-(--line) rounded-md '>Rematch</button> */}

@@ -28,7 +28,6 @@ const GameBoard = ({ board, currentTurn, mySymbol, status, winner, onCellClick }
           ))}
         </ul>
       </div>
-
       
     </div>
   )

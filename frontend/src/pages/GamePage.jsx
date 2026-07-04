@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { useParams, useLocation } from 'react-router-dom';
+import React, { useEffect, useState, useRef } from 'react'
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { socket } from '../lib/socket';
 import GameBoard from '../components/GameBoard';
 import { Xmark, Omark } from '../components/Marks';
@@ -8,6 +8,8 @@ import GameOverModal from '../components/GameOverModal';
 const GamePage = () => {
   const location = useLocation();
   const { roomCode } = useParams();
+  const navigate = useNavigate();
+  const isActiveGame = useRef(false);
 
   const { room: initialRoom } = location?.state || {};
   const [room, setRoom] = useState(initialRoom || null);
@@ -21,9 +23,10 @@ const GamePage = () => {
 
   useEffect(() => {
     socket.on("game_start", (room) => {
+      isActiveGame.current = true;
       setStatus("playing");
       setRoom(room);
-      const me = room.players.find(player => player.socketId === socket.id);
+      const me = room?.players.find(player => player.socketId === socket.id);
       setMySymbol(me.symbol);
     });
 
@@ -41,6 +44,11 @@ const GamePage = () => {
       socket.off("game_start");
       socket.off("game_update");
       socket.off("player_disconnected");
+      
+      if (isActiveGame.current) {
+        socket.emit("leave_room", { roomCode });
+      }
+
     }
 
   }, [roomCode]);
@@ -72,20 +80,33 @@ const GamePage = () => {
           </div>
         </div>
 
-        {(!room && status === "waiting") ? (
+
+        {(status === "waiting" || status === "disconnected") ? (
           <div className='flex flex-col justify-between items-center'>
-            <div className="w-8 h-8 rounded-full border-[3px] border-(--line) border-t-(--o-teal) animate-spin" />
-            <p>Waiting for Opponent</p>
+            {status === "waiting" && (
+              <div className='flex flex-col justify-between items-center'>
+                <div className="w-8 h-8 rounded-full border-[3px] border-(--line) border-t-(--o-teal) animate-spin" />
+                <p>Waiting for Opponent</p>
+              </div>
+            )}
+            {status === "disconnected" && (
+              <div className='text-2xl font-semibold'>
+                <p>Opponent has disconnected</p>
+                <a href="/" className='text-(--x-red) hover:underline'>Back to lobby</a>
+              </div>
+            )}
           </div>
-        ) : <GameBoard board={room.board}
+        ) : <GameBoard 
+              board={room.board}
               currentTurn={room.currentTurn}
               mySymbol={mySymbol}
               status={room.status}
               winner={room?.winner}
               onCellClick={handleCellClick}
+              gameStatus={status}
             />}
 
-          {(room?.winner || status === "draw") && <GameOverModal winner={room?.winner} mySymbol={mySymbol} status={status}/>}        
+          {(status === "won" || status === "draw") && <GameOverModal winner={room?.winner} mySymbol={mySymbol} status={status}/>}
       </div>
     </div>
   )
