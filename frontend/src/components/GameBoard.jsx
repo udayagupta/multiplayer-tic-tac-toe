@@ -13,6 +13,7 @@ const Cell = ({ value, handleCellClick, index }) => (
 
 
 const GameBoard = ({ board, currentTurn, mySymbol, status, winner, onCellClick }) => {
+
   return (
     <div className=''>
       <div className='flex flex-col items-center justify-center'>

@@ -136,14 +136,13 @@ body {
     display: grid;
     grid-template-rows: repeat(3, 1fr);
     grid-template-columns: repeat(3, 1fr);
-    /* border: 1px solid var(--ink); */
-    max-width: 400px;
-    gap: 12px;
+    width: min(92vw, 400px);
+    gap: clamp(6px, 2vw, 12px);
 }
 
 .cell {
-    --dimensions: 110px;
-    padding: 2rem;
+    --dimensions: clamp(72px, 22vw, 110px);
+    padding: clamp(0.75rem, 4vw, 2rem);
     border: 1px solid var(--line);
     border-radius: 4px;
     background-color: var(--ink-soft);

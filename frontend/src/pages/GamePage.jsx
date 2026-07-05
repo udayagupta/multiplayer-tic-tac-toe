@@ -5,6 +5,14 @@ import GameBoard from '../components/GameBoard';
 import { Xmark, Omark } from '../components/Marks';
 import GameOverModal from '../components/GameOverModal';
 
+const EVENTS_CONFIG = {
+  GAME_START: "game_start",
+  MAKE_MOVE: "make_move",
+  GAME_UPDATE: "game_update",
+  PLAYER_DISCONNECTED: "player_disconnected",
+  REMATCH_INITIATED: "rematch_initiated",
+}
+
 const GamePage = () => {
   const location = useLocation();
   const { roomCode } = useParams();
@@ -15,6 +23,9 @@ const GamePage = () => {
   const [room, setRoom] = useState(initialRoom || null);
   const [status, setStatus] = useState(initialRoom ? "playing" : "waiting");
   const [mySymbol, setMySymbol] = useState(null);
+  // const [isWaiting, setIsWaiting] = useState(false);
+  const isWaiting = room?.rematchRequestes?.[0] === socket.id;
+
 
   const handleCellClick = (cellIndex) => {
     console.log(cellIndex, "is clicked")
@@ -39,11 +50,22 @@ const GamePage = () => {
       setStatus("disconnected");
     })
 
+    socket.on("rematch_initiated", (updatedRoom) => {
+      setStatus(updatedRoom.status);
+      setRoom(updatedRoom);
+    })
+
+    socket.on("rematch_requested", (updatedRoom) => {
+      setRoom(updatedRoom);
+      setStatus(updatedRoom.status);
+    })
+
 
     return () => {
       socket.off("game_start");
       socket.off("game_update");
       socket.off("player_disconnected");
+      socket.off("rematch_initiated");
       
       if (isActiveGame.current) {
         socket.emit("leave_room", { roomCode });
@@ -67,8 +89,8 @@ const GamePage = () => {
 
   return (
     <div className='lobby flex  items-center h-screen'>
-      <div className='lobby-content text-center w-full'>
-        <div className='bg-(--ink-soft) mb-5 m-auto border  border-(--line) rounded-md  flex gap-5 w-[300px] py-2 justify-center items-center'>
+      <div className='lobby-content text-center w-full flex flex-col justify-center items-center'>
+        <div className='bg-(--ink-soft) mb-5 mx-4 sm:m-auto border border-(--line) rounded-md flex gap-5 w-full sm:w-[300px] max-w-[300px] py-2 justify-center items-center'>
           <div className='flex items-center justify-center gap-2 flex-1'>
             {mySymbol === 'X' ? <Xmark /> : <Omark />}
             <p>YOU</p>

@@ -38,7 +38,8 @@ const createRoom = (socketId) => {
     ],
     board: Array(9).fill(null),
     currentTurn: 'X',
-    status: "waiting"
+    status: "waiting",
+    rematchRequests: [],
   };
 
   rooms[roomCode] = room;
@@ -86,4 +87,29 @@ const applyMove = (room, cellIndex) => {
   return room;
 };
 
-module.exports = { rooms, checkWinner, createRoom, joinRoom, isValidMove, applyMove };
+const requestRematch = (room, socketId) => {
+  if (room.rematchRequests.includes(socketId)) return { success: false };
+
+  room.rematchRequests.push(socketId);
+
+  const rematchLenth = room.rematchRequests.length;
+
+  if (rematchLenth === 1) {
+    const player = room.players.find(player => player.socketId === socketId);
+    room.currentTurn = player.symbol;
+    room.previousStatus = room.status;
+    room.status = "rematch_requested";
+    return { success: true, room, isRematch: false };
+
+  } else if (rematchLenth === 2) {
+    // currentTurn already set in length === 1 block, intentionally kept
+    room.status = "playing";
+    room.board = Array(9).fill(null);
+    room.winner = null;
+    room.rematchRequests = [];
+    return { success: true, room, isRematch: true };
+  }
+};
+
+
+module.exports = { rooms, checkWinner, createRoom, joinRoom, isValidMove, applyMove, requestRematch };

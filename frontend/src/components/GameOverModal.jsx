@@ -23,9 +23,10 @@ const GameOverModal = ({ winner, mySymbol, status, gameStatus }) => {
   const isWinner = winner === mySymbol;
   const isDraw = status === "draw";
 
+
   return (
     <div style={{backgroundColor: "rgba(0, 0, 0, 0.5)"}} className='w-full h-screen fixed inset-0 z-[10] flex items-center justify-center'>
-      <div className={` flex flex-col gap-3 bg-(--ink-soft) border border-(--line) p-8 rounded w-[300px] `}>
+      <div className={`flex flex-col gap-3 bg-(--ink-soft) border border-(--line) p-6 sm:p-8 rounded w-[90%] max-w-[300px]`}>
         <div className='flex flex-col gap-3 text-(--o-teal) items-center justify-center'>
           <GoCheckCircleFill size={50}/>
           <p>Game Over</p>
@@ -36,7 +37,8 @@ const GameOverModal = ({ winner, mySymbol, status, gameStatus }) => {
           {status === "disconnected" && <p className='text-lg'>Opponent has disconnected</p>}
         </div>
         <div className='flex flex-col gap-2'>
-          {/* <button className='p-2 bg-(--o-teal) text-(--ink) hover:bg-(--ink) hover:text-(--o-teal) transition duration-300 cursor-pointer font-semibold border border-(--line) rounded-md '>Rematch</button> */}
+          {/* Rematch button will emit "request_rematch" */}
+          <button className='p-2 bg-(--o-teal) text-(--ink) hover:bg-(--ink) hover:text-(--o-teal) transition duration-300 cursor-pointer font-semibold border border-(--line) rounded-md '>Rematch</button>
           <a href='/' className='p-2 border font-semibold transition duration-300 hover:bg-(--o-teal) hover:text-(--ink) border-(--line) rounded-md '>Back to lobby</a>
         </div>
       </div>
