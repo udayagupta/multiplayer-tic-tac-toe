@@ -5,7 +5,7 @@ import GameBoard from '../components/GameBoard';
 import { Xmark, Omark } from '../components/Marks';
 import GameOverModal from '../components/GameOverModal';
 
-const EVENTS_CONFIG = {
+const EVENTS_NAMES = {
   GAME_START: "game_start",
   MAKE_MOVE: "make_move",
   GAME_UPDATE: "game_update",
@@ -23,8 +23,7 @@ const GamePage = () => {
   const [room, setRoom] = useState(initialRoom || null);
   const [status, setStatus] = useState(initialRoom ? "playing" : "waiting");
   const [mySymbol, setMySymbol] = useState(null);
-  // const [isWaiting, setIsWaiting] = useState(false);
-  const isWaiting = room?.rematchRequestes?.[0] === socket.id;
+  const isWaiting = room?.rematchRequests?.[0] === socket.id;
 
 
   const handleCellClick = (cellIndex) => {
@@ -49,15 +48,22 @@ const GamePage = () => {
     socket.on("player_disconnected", ({ message, roomCode }) => {
       setStatus("disconnected");
     })
-
+    
+    // for player A - who initiated the rematch
     socket.on("rematch_initiated", (updatedRoom) => {
       setStatus(updatedRoom.status);
       setRoom(updatedRoom);
     })
-
+    
+    // for player B - who will either accept or decline
     socket.on("rematch_requested", (updatedRoom) => {
       setRoom(updatedRoom);
       setStatus(updatedRoom.status);
+    })
+
+    // for player A - whose offer is declined
+    socket.on("request_declined", () => {
+      setStatus("declined");
     })
 
 
@@ -66,6 +72,8 @@ const GamePage = () => {
       socket.off("game_update");
       socket.off("player_disconnected");
       socket.off("rematch_initiated");
+      socket.off("rematch_requested");
+      socket.off("request_declined");
       
       if (isActiveGame.current) {
         socket.emit("leave_room", { roomCode });
@@ -128,7 +136,16 @@ const GamePage = () => {
               gameStatus={status}
             />}
 
-          {(status === "won" || status === "draw") && <GameOverModal winner={room?.winner} mySymbol={mySymbol} status={status}/>}
+          {(status === "won" || status === "draw" || status === "rematch_requested" || status === "declined") && (
+            <GameOverModal 
+              winner={room?.winner} 
+              mySymbol={mySymbol} 
+              status={status}
+              room={room}
+              isWaiting={isWaiting}
+              gameStatus={status}
+            />
+            )}
       </div>
     </div>
   )
