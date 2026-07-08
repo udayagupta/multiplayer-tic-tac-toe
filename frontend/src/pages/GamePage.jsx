@@ -23,7 +23,7 @@ const GamePage = () => {
   const [room, setRoom] = useState(initialRoom || null);
   const [status, setStatus] = useState(initialRoom ? "playing" : "waiting");
   const [mySymbol, setMySymbol] = useState(null);
-  const isWaiting = room?.rematchRequests?.[0] === socket.id;
+  const isWaiting = (room?.rematchRequests?.[0] === socket.id) || (room?.rematchStatus === "declined");
 
 
   const handleCellClick = (cellIndex) => {
@@ -57,12 +57,14 @@ const GamePage = () => {
     
     // for player B - who will either accept or decline
     socket.on("rematch_requested", (updatedRoom) => {
+      if (room?.status === "rematch_requested") return;
       setRoom(updatedRoom);
       setStatus(updatedRoom.status);
     })
 
     // for player A - whose offer is declined
-    socket.on("request_declined", () => {
+    socket.on("request_declined", (room) => {
+      setRoom(room);
       setStatus("declined");
     })
 
@@ -112,9 +114,9 @@ const GamePage = () => {
 
 
         {(status === "waiting" || status === "disconnected") ? (
-          <div className='flex flex-col justify-between items-center'>
+          <div className='flex flex-col justify-between items-center pt-2'>
             {status === "waiting" && (
-              <div className='flex flex-col justify-between items-center'>
+              <div className='flex flex-col gap-2 justify-between items-center'>
                 <div className="w-8 h-8 rounded-full border-[3px] border-(--line) border-t-(--o-teal) animate-spin" />
                 <p>Waiting for Opponent</p>
               </div>

@@ -39,8 +39,8 @@ const GameOverModal = ({ winner, mySymbol, status, gameStatus, room, isWaiting }
   };
 
   useEffect(() => {
-    console.log({ room, gameStatus });
-  }, [room, gameStatus])
+    console.log({ room, gameStatus, hasDeclined, socketId: socket.id, isWaiting });
+  }, [room, gameStatus, hasDeclined])
 
   return (
     <div style={{backgroundColor: "rgba(0, 0, 0, 0.5)"}} className='w-full h-screen fixed inset-0 z-[10] flex items-center justify-center'>
@@ -51,23 +51,27 @@ const GameOverModal = ({ winner, mySymbol, status, gameStatus, room, isWaiting }
         </div>
         <div className='font-semibold text-2xl'>
           {isDraw && <p>{RESULT_CONFIG.draw.text}</p>}
+          
           {winner && <p className={`${isWinner ? "animate-bounce" : "animate-pulse"})`}>{isWinner ? RESULT_CONFIG.win.text : RESULT_CONFIG.lose.text}</p>}
+          
           {status === "disconnected" && <p className='text-lg'>Opponent has disconnected</p>}
+          
           {(status === "rematch_requested" && isWaiting) && (
-            <div className='flex flex-col justify-between items-center'>
+            <div className='flex flex-col gap-2 mt-2 justify-between items-center'>
               <div className="w-8 h-8 rounded-full border-[3px] border-(--line) border-t-(--o-teal) animate-spin" />
-              <p>Waiting for Opponent to accept</p>
+              <p className='text-xl'>Waiting for Opponent to accept</p>
             </div>
           )}
           {(status === "rematch_requested" && !isWaiting && !hasDeclined) && (
             <div className=''>
-              <p>Your Opponent has asked for a <span className='text-(--o-teal) font-semibold'>rematch</span></p>
+              <p className='text-xl'>Your Opponent has asked for a <span className='text-(--o-teal) font-semibold'>rematch</span></p>
             </div>
           )}
           {(hasDeclined && !isWaiting) && (
-            <p>You have declined the offer</p>
+            <p className='text-xl'>You have declined the offer</p>
           )}
         </div>
+
         <div className='flex flex-col gap-2'>
           {(status === "won" || isDraw) && (
             <div className='flex gap-3'>
@@ -86,9 +90,9 @@ const GameOverModal = ({ winner, mySymbol, status, gameStatus, room, isWaiting }
             <button onClick={() => handleDecline(room.roomCode)} className='active:scale-[0.9] border border-(--line) text-(--o-teal) flex-1 cursor-pointer rounded p-3'>Decline</button>
           </div>
           )}
-          {hasDeclined && (
-            <div> 
-              {isWaiting && <p>You offer was declined</p>}
+          {(hasDeclined || room.rematchStatus === "declined") && (
+            <div>
+              {isWaiting && <p className='text-xl font-semibold mb-4'>Your offer was declined</p>}
               <a href='/' className='p-2 border font-semibold transition duration-300 border-(--line) rounded-md '>Back to lobby</a>
             </div>            
           )}

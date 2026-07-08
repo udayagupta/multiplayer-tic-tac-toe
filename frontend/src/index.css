@@ -138,6 +138,7 @@ body {
     grid-template-columns: repeat(3, 1fr);
     width: min(92vw, 400px);
     gap: clamp(6px, 2vw, 12px);
+    /* border: 1px solid red; */
 }
 
 .cell {

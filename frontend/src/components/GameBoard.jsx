@@ -17,11 +17,11 @@ const GameBoard = ({ board, currentTurn, mySymbol, status, winner, onCellClick }
   return (
     <div className=''>
       <div className='flex flex-col items-center justify-center'>
-        <div className='uppercase text-2xl'>
+        <div className='uppercase text-2xl mt-2'>
           <p>{currentTurn === mySymbol ? `Your Turn` : `Opponent's Turn`}</p>
         </div>
 
-        <ul className='game-board mt-5'>
+        <ul className='game-board mt-3'>
           {board.map((value, index) => (
             <li key={index} className='flex justify-center items-center'>
               <Cell handleCellClick={onCellClick} index={index} key={index} value={value}/>

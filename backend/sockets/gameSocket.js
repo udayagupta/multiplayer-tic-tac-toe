@@ -94,9 +94,10 @@ const gameSocket = (io, socket) => {
 
         const waiter = room.rematchRequests[0];
 
-        io.to(waiter).emit("request_declined");
         room.rematchRequests = [];
         room.status = room.previousStatus;
+        room.rematchStatus = "declined";
+        io.to(waiter).emit("request_declined", room);
     })
 
 }
