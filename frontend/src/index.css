@@ -57,6 +57,26 @@ body {
 
 }
 
+.quick-play-btn {
+    background-color: var(--o-teal);
+    padding: 1rem;
+    border-radius: 4px;
+    box-shadow: 0 4px 0 #357877, 0 8px 24px rgba(74, 163, 162, 0.25);
+    transition: 300ms;
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: var(--ink);
+}
+
+.quick-play-btn:hover {
+    cursor: pointer;
+}
+
+.quick-play-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #357877, 0 4px 16px rgba(74, 163, 162, 0.25);
+}
+
 .mark-row {
     display: flex;
     justify-content: center;

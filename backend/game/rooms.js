@@ -8,6 +8,7 @@ const GAME_STATUS = {
 }
 
 const rooms = {};
+let queue = [];
 
 const checkWinner = (board) => {
   const combinations = [
@@ -112,4 +113,4 @@ const requestRematch = (room, socketId) => {
 };
 
 
-module.exports = { rooms, checkWinner, createRoom, joinRoom, isValidMove, applyMove, requestRematch };
+module.exports = { rooms, queue, checkWinner, createRoom, joinRoom, isValidMove, applyMove, requestRematch };

@@ -31,6 +31,10 @@ const GamePage = () => {
     socket.emit("make_move", { roomCode, cellIndex });
   };
 
+  // const handleLeave = () => { 
+  //   socket.emit("leave_room", ({ roomCode }))
+  //  };
+
   useEffect(() => {
     socket.on("game_start", (room) => {
       isActiveGame.current = true;
@@ -136,6 +140,7 @@ const GamePage = () => {
               winner={room?.winner}
               onCellClick={handleCellClick}
               gameStatus={status}
+              handleLeave={handleLeave}
             />}
 
           {(status === "won" || status === "draw" || status === "rematch_requested" || status === "declined") && (

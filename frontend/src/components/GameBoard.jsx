@@ -12,7 +12,7 @@ const Cell = ({ value, handleCellClick, index }) => (
 );
 
 
-const GameBoard = ({ board, currentTurn, mySymbol, status, winner, onCellClick }) => {
+const GameBoard = ({ board, currentTurn, mySymbol, status, winner, onCellClick, handleLeave }) => {
 
   return (
     <div className=''>
@@ -28,6 +28,8 @@ const GameBoard = ({ board, currentTurn, mySymbol, status, winner, onCellClick }
             </li>
           ))}
         </ul>
+
+        {/* <button onClick={handleLeave} className='mt-10 active:scale-[0.9] transition cursor-pointer px-5 py-2 rounded bg-(--x-red) text-(--ink) font-semibold'>Leave Room</button> */}
       </div>
       
     </div>

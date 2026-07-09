@@ -1,4 +1,4 @@
-const { rooms, applyMove, checkWinner, createRoom, isValidMove, joinRoom, requestRematch } = require("../game/rooms");
+const { rooms, applyMove, checkWinner, createRoom, isValidMove, joinRoom, requestRematch, queue } = require("../game/rooms");
 
 const gameSocket = (io, socket) => {
     socket.on("create_room", () => {
@@ -41,6 +41,10 @@ const gameSocket = (io, socket) => {
     socket.on("disconnect", () => {
         console.log("disconnect fired for", socket.id);
         console.log("current rooms:", JSON.stringify(rooms, null, 2));
+        console.log({ queue });
+
+        const queueIndex = queue.indexOf(socket.id);
+        if (queueIndex !== -1) queue.filter(id => id !== socket.id);
 
         const room = Object.values(rooms).find(r => r.players.find(pl => pl.socketId === socket.id));
         if (!room) return;
@@ -98,6 +102,35 @@ const gameSocket = (io, socket) => {
         room.status = room.previousStatus;
         room.rematchStatus = "declined";
         io.to(waiter).emit("request_declined", room);
+    })
+
+    socket.on("find_match", () => {
+        if (queue.includes(socket.id)) return;
+
+        queue.push(socket.id);
+        console.log({ queue, messsage: `${socket.id} is finding a match` });
+
+        if (queue.length >= 2) {
+            const playerAId = queue.shift();
+            const playerBId = queue.shift();
+
+            // in-memory room
+            const { room } = createRoom(playerAId);
+            joinRoom(playerBId, room.roomCode);
+
+            // Socket.io room
+            const playerASocket = io.sockets.sockets.get(playerAId);
+            playerASocket.join(room.roomCode);
+            socket.join(room.roomCode);
+
+            io.to(room.roomCode).emit("game_start", rooms[room.roomCode]);
+
+        }
+    })
+
+    socket.on("cancel_match", () => {
+        const queueIndex = queue.indexOf(socket.id);
+        if (queueIndex !== -1) queue.filter(id => id !== socket.id);
     })
 
 }
