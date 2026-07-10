@@ -52,6 +52,11 @@ const LobbyPage = () => {
 
   };
 
+  const handleCancel = () => {
+    socket.emit("cancel_match");
+    setIsSearching(false);
+  }
+
   // const handleLeave = () => { socket.emit("leave_room") };
 
   return (
@@ -70,7 +75,7 @@ const LobbyPage = () => {
             <div className='flex flex-col mt-5 gap-2 justify-between items-center'>
               <div className="w-8 h-8 rounded-full border-[3px] border-(--line) border-t-(--o-teal) animate-spin" />
               <p>Finding Opponent...</p>
-              <button className='cursor-pointer p-2 rounded bg-(--o-teal) text-(--ink) font-semibold border border-(--line)' onClick={() => socket.emit("cancel_match")}>Cancel</button>
+              <button className='cursor-pointer p-2 rounded bg-(--o-teal) text-(--ink) font-semibold border border-(--line)' onClick={handleCancel}>Cancel</button>
             </div>
           )}
 

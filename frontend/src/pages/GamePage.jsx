@@ -140,7 +140,7 @@ const GamePage = () => {
               winner={room?.winner}
               onCellClick={handleCellClick}
               gameStatus={status}
-              handleLeave={handleLeave}
+              // handleLeave={handleLeave}
             />}
 
           {(status === "won" || status === "draw" || status === "rematch_requested" || status === "declined") && (
