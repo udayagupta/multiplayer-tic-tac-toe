@@ -31,13 +31,11 @@ const GamePage = () => {
     socket.emit("make_move", { roomCode, cellIndex });
   };
 
-  // const handleLeave = () => { 
-  //   socket.emit("leave_room", ({ roomCode }))
-  //  };
 
   useEffect(() => {
     socket.on("game_start", (room) => {
       isActiveGame.current = true;
+      console.log("isActiveGame set to", isActiveGame.current);
       setStatus("playing");
       setRoom(room);
       const me = room?.players.find(player => player.socketId === socket.id);
@@ -50,6 +48,7 @@ const GamePage = () => {
     })
 
     socket.on("player_disconnected", ({ message, roomCode }) => {
+      console.log("player_disconnected received");
       setStatus("disconnected");
     })
     
@@ -74,6 +73,7 @@ const GamePage = () => {
 
 
     return () => {
+      console.log("isActiveGame set to", isActiveGame.current);
       socket.off("game_start");
       socket.off("game_update");
       socket.off("player_disconnected");
@@ -82,6 +82,7 @@ const GamePage = () => {
       socket.off("request_declined");
       
       if (isActiveGame.current) {
+        console.log("leave_room will be emitted now")
         socket.emit("leave_room", { roomCode });
       }
 
@@ -140,7 +141,6 @@ const GamePage = () => {
               winner={room?.winner}
               onCellClick={handleCellClick}
               gameStatus={status}
-              // handleLeave={handleLeave}
             />}
 
           {(status === "won" || status === "draw" || status === "rematch_requested" || status === "declined") && (

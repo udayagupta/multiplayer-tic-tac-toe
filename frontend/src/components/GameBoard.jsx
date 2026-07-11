@@ -12,7 +12,7 @@ const Cell = ({ value, handleCellClick, index }) => (
 );
 
 
-const GameBoard = ({ board, currentTurn, mySymbol, status, winner, onCellClick, handleLeave }) => {
+const GameBoard = ({ board, currentTurn, mySymbol, status, winner, onCellClick }) => {
 
   return (
     <div className=''>

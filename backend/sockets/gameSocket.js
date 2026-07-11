@@ -1,4 +1,5 @@
-const { rooms, applyMove, checkWinner, createRoom, isValidMove, joinRoom, requestRematch, queue } = require("../game/rooms");
+const { rooms, applyMove, checkWinner, createRoom, isValidMove, joinRoom, requestRematch } = require("../game/rooms");
+let { queue } = require("../game/rooms");
 
 const gameSocket = (io, socket) => {
     socket.on("create_room", () => {
@@ -60,7 +61,10 @@ const gameSocket = (io, socket) => {
     });
 
     socket.on("leave_room", ({ roomCode }) => {
+        console.log("leave_room fired", roomCode);
+        
         const room = rooms[roomCode];
+        console.log("room found:", room);
         if (!room) return;
 
         io.to(roomCode).emit("player_disconnected", {
@@ -129,8 +133,12 @@ const gameSocket = (io, socket) => {
     })
 
     socket.on("cancel_match", () => {
-        const queueIndex = queue.indexOf(socket.id);
-        if (queueIndex !== -1) queue.filter(id => id !== socket.id);
+        console.log("before cancel_match", Object.keys(rooms), queue);
+
+        queue = queue.filter(id => id !== socket.id)
+
+        console.log("after cancel_match", Object.keys(rooms), queue);
+
     })
 
 }

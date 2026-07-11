@@ -2,14 +2,14 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const http = require("http");
-const connectDB = require("./config/db");
+// const connectDB = require("./config/db");
 const { Server } = require("socket.io");
 const gameSocket = require("./sockets/gameSocket");
 
 const app = express();
 const server = http.createServer(app);
 
-connectDB();
+// connectDB();
 
 app.use(cors());
 app.use(express.json());
