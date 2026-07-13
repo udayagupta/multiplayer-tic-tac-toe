@@ -20,7 +20,7 @@ const LobbyPage = () => {
     });
 
     socket.on("game_start", (room) => {
-      navigate(`/game/${roomCode}`, { state: { room } });
+      navigate(`/game/${roomCode}`, { state: { room, isActive: true } });
       console.log(room);
     });
 
@@ -46,7 +46,7 @@ const LobbyPage = () => {
     socket.emit("find_match");
 
     socket.on("game_start", (room) => {
-      navigate(`/game/${room.roomCode}`, { state: { room } });
+      navigate(`/game/${room.roomCode}`, { state: { room, isActive: true } });
       console.log(room);
     });
 

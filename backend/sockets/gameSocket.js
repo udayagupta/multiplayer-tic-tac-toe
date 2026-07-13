@@ -32,6 +32,7 @@ const gameSocket = (io, socket) => {
         if (validMove.success) {
             const result = applyMove(room, cellIndex);
             io.to(roomCode).emit("game_update", result);
+            console.log(result);
 
         } else {
             console.log("not a valid move")

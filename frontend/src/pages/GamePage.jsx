@@ -19,7 +19,7 @@ const GamePage = () => {
   const navigate = useNavigate();
   const isActiveGame = useRef(false);
 
-  const { room: initialRoom } = location?.state || {};
+  const { room: initialRoom, isActive } = location?.state || {};
   const [room, setRoom] = useState(initialRoom || null);
   const [status, setStatus] = useState(initialRoom ? "playing" : "waiting");
   const [mySymbol, setMySymbol] = useState(null);
@@ -35,7 +35,6 @@ const GamePage = () => {
   useEffect(() => {
     socket.on("game_start", (room) => {
       isActiveGame.current = true;
-      // console.log("isActiveGame set to", isActiveGame.current);
       setStatus("playing");
       setRoom(room);
       const me = room?.players.find(player => player.socketId === socket.id);
@@ -81,7 +80,6 @@ const GamePage = () => {
       socket.off("rematch_initiated");
       socket.off("rematch_requested");
       socket.off("request_declined");
-      // socket.emit("leave_room", { roomCode });
       
       if (isActiveGame.current) {
         console.log("leave_room WILL emit");
