@@ -35,7 +35,7 @@ const GamePage = () => {
   useEffect(() => {
     socket.on("game_start", (room) => {
       isActiveGame.current = true;
-      console.log("isActiveGame set to", isActiveGame.current);
+      // console.log("isActiveGame set to", isActiveGame.current);
       setStatus("playing");
       setRoom(room);
       const me = room?.players.find(player => player.socketId === socket.id);
@@ -43,6 +43,7 @@ const GamePage = () => {
     });
 
     socket.on("game_update", (updatedRoom) => {
+      isActiveGame.current = true;
       setRoom(updatedRoom);
       setStatus(updatedRoom.status);
     })
@@ -73,17 +74,20 @@ const GamePage = () => {
 
 
     return () => {
-      console.log("isActiveGame set to", isActiveGame.current);
+      console.log("cleanup running, roomCode:", roomCode, "isActive:", isActiveGame.current);
       socket.off("game_start");
       socket.off("game_update");
       socket.off("player_disconnected");
       socket.off("rematch_initiated");
       socket.off("rematch_requested");
       socket.off("request_declined");
+      // socket.emit("leave_room", { roomCode });
       
       if (isActiveGame.current) {
-        console.log("leave_room will be emitted now")
+        console.log("leave_room WILL emit");
         socket.emit("leave_room", { roomCode });
+      } else {
+        console.log("leave_room BLOCKED, isActive is false");
       }
 
     }
@@ -93,6 +97,7 @@ const GamePage = () => {
   useEffect(() => {
     if (initialRoom) {
       const me = room.players.find(player => player.socketId === socket.id);
+      // isActiveGame.current = true;
       setMySymbol(me.symbol);
     }
   }, []);

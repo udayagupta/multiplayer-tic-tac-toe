@@ -45,9 +45,12 @@ const gameSocket = (io, socket) => {
         console.log({ queue });
 
         const queueIndex = queue.indexOf(socket.id);
-        if (queueIndex !== -1) queue.filter(id => id !== socket.id);
+        if (queueIndex !== -1) {
+            queue = queue.filter(id => id !== socket.id)
+        };
 
         const room = Object.values(rooms).find(r => r.players.find(pl => pl.socketId === socket.id));
+        console.log("room found in disconnect:", room?.roomCode);
         if (!room) return;
 
         const { roomCode } = room;
